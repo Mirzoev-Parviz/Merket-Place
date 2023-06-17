@@ -20,3 +20,6 @@ func (u *UserService) UpdateUser(id int, user models.User) error {
 	user.Password = generatePasswordHash(user.Password)
 	return u.repo.UpdateUser(id, user)
 }
+func (u *UserService) DeactivateUser(id int) error {
+	return u.repo.DeactivateUser(id)
+}
