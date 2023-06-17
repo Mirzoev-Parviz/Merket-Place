@@ -27,6 +27,7 @@ type Product interface {
 	CreateProduct(userId int, product models.Product) (int, error)
 	GetProduct(id int) (models.Product, error)
 	UpdateProduct(id, userId int, product models.Product) error
+	DeactivateProduct(id, userid int) error
 }
 
 type Repository struct {

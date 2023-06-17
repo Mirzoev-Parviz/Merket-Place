@@ -26,3 +26,6 @@ func (p *ProductService) GetProduct(id int) (models.Product, error) {
 func (p *ProductService) UpdateProduct(id, userId int, product models.Product) error {
 	return p.repo.UpdateProduct(id, userId, product)
 }
+func (p *ProductService) DeactivateProduct(id, userId int) error {
+	return p.repo.DeactivateProduct(id, userId)
+}

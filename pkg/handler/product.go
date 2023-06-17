@@ -81,3 +81,27 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "successfully updated"})
 }
+
+func (h *Handler) DeleteProduct(c *gin.Context) {
+	id, err := getId(c)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	userId, err := getUserId(c)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	if err = h.services.DeactivateProduct(id, userId); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
+}

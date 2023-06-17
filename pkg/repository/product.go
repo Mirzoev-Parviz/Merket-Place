@@ -42,3 +42,25 @@ func (p *ProductPostgres) UpdateProduct(id, userId int, product models.Product) 
 
 	return nil
 }
+
+func (p *ProductPostgres) DeactivateProduct(id, userId int) error {
+	var product models.Product
+	err := config.DB.Where("id = ? AND user_id = ? AND is_active = TRUE", id, userId).First(&product).Error
+	if err != nil {
+		return err
+	}
+
+	var category models.Category
+	if err = config.DB.Where("name = ?", product.Category).First(&category).Error; err != nil {
+		return err
+	}
+
+	category.Amount--
+	product.IsActive = false
+
+	if err = config.DB.Save(&product).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

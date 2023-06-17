@@ -50,7 +50,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			product.POST("/", h.UserIdentity, h.AddProduct)
 			product.GET("/:id", h.ShowProduct)
 			product.PUT("/:id", h.UserIdentity, h.UpdateProduct)
-			// product.DELETE("/:id")
+			product.DELETE("/:id", h.UserIdentity, h.DeleteProduct)
 		}
 
 		user := router.Group("user")
