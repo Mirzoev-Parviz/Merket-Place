@@ -7,6 +7,7 @@ import (
 	"market_place/config"
 	"market_place/models"
 	"market_place/pkg/handler"
+	"market_place/pkg/logging"
 	"market_place/pkg/repository"
 	"market_place/pkg/service"
 	"os"
@@ -18,6 +19,8 @@ import (
 
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
+	logger := logging.GetLogger()
+	logger.Info("create router")
 
 	config.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Product{})
 	db := config.ConnectDB()
@@ -25,12 +28,12 @@ func main() {
 
 	repository := repository.NewRepository(db)
 	service := service.NewService(repository)
-	handlers := handler.NewHandler(service)
+	handlers := handler.NewHandler(service, logger)
 	srv := new(market_place.Server)
 
 	go func() {
 		if err := srv.Run(os.Getenv("PORT"), handlers.InitRoutes()); err != nil {
-			logrus.Fatalf("error server connection: %s", err.Error())
+			logger.Fatalf("error server connection: %s", err.Error())
 		}
 	}()
 	fmt.Println("App started...")
@@ -41,7 +44,7 @@ func main() {
 
 	fmt.Println("Server shutting down...")
 	if err := srv.Shutdown(context.Background()); err != nil {
-		fmt.Errorf("error occured on server shutting down: %s", err.Error())
+		logger.Errorf("error occured on server shutting down: %s", err.Error())
 	}
 
 }

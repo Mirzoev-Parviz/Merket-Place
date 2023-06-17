@@ -12,12 +12,14 @@ func (h *Handler) SignUp(c *gin.Context) {
 	var input models.User
 
 	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid input body"})
 	}
 
 	exist, err := h.services.CheckLogin(input.Login)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "error while checking login"})
 		return
 	}
 
@@ -28,7 +30,8 @@ func (h *Handler) SignUp(c *gin.Context) {
 
 	id, err := h.services.CreateUser(input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "error while creating user"})
 		return
 	}
 
@@ -38,13 +41,14 @@ func (h *Handler) SignUp(c *gin.Context) {
 func (h *Handler) SignIn(c *gin.Context) {
 	var input models.SignInput
 	if err := c.ShouldBind(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid input body"})
 		return
 	}
 
 	token, err := h.services.GenerateToken(input.Login, input.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "no such user exists"})
 		return
 	}
 
@@ -54,7 +58,8 @@ func (h *Handler) SignIn(c *gin.Context) {
 func (h *Handler) ShowID(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		h.logger.Error(err.Error())
+		// c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 

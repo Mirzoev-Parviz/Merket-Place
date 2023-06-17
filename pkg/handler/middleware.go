@@ -15,6 +15,7 @@ const (
 func (h *Handler) UserIdentity(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
+		h.logger.Error("failed to get header")
 		c.JSON(http.StatusBadRequest, gin.H{"message": "empty auth header"})
 		return
 	}
@@ -22,12 +23,14 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 	headerParts := strings.Split(header, " ")
 
 	if len(headerParts) != 2 {
+		h.logger.Error("invalid format header")
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid auth header"})
 		return
 	}
 
 	userId, err := h.services.Authorization.ParseToken(headerParts[1])
 	if err != nil {
+		h.logger.Error(err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 		return
 	}

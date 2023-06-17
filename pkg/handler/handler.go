@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"market_place/pkg/logging"
 	"market_place/pkg/service"
 	"net/http"
 
@@ -9,10 +10,14 @@ import (
 
 type Handler struct {
 	services *service.Service
+	logger   logging.Logger
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+func NewHandler(services *service.Service, logger logging.Logger) *Handler {
+	return &Handler{
+		services: services,
+		logger:   logger,
+	}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {

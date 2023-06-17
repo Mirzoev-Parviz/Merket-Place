@@ -11,6 +11,7 @@ import (
 func (h *Handler) UpdateUser(c *gin.Context) {
 	id, err := getId(c)
 	if err != nil {
+		h.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -18,22 +19,26 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 	var input models.User
 
 	if err = c.BindJSON(&input); err != nil {
+		h.logger.Error(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	exist, err := h.services.CheckLogin(input.Login)
 	if err != nil {
+		h.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 
 	if exist && input.Login != "" {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "use is already taken"})
+		h.logger.Error("the user entered a login that already exists")
+		c.JSON(http.StatusBadRequest, gin.H{"message": "user is already taken"})
 		return
 	}
 
 	if err = h.services.UpdateUser(id, input); err != nil {
+		h.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
