@@ -24,7 +24,7 @@ func (a *AuthPostgres) CreateUser(user models.User) (int, error) {
 	return user.Id, nil
 }
 
-func (a *AuthPostgres) GetUser(login, password string) (user models.User, err error) {
+func (a *AuthPostgres) CheckUser(login, password string) (user models.User, err error) {
 	err = config.DB.Where("login = ? AND password = ? AND is_active = TRUE", login, password).First(&user).Error
 	if err != nil {
 		return models.User{}, err

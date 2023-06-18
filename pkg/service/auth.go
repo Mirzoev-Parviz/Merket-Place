@@ -42,7 +42,7 @@ func generatePasswordHash(password string) string {
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
 func (a *AuthService) GenerateToken(login, password string) (string, error) {
-	user, err := a.repo.GetUser(login, generatePasswordHash(password))
+	user, err := a.repo.CheckUser(login, generatePasswordHash(password))
 	if err != nil {
 		return "", err
 	}

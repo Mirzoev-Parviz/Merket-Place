@@ -8,7 +8,7 @@ import (
 
 type Authorization interface {
 	CreateUser(user models.User) (int, error)
-	GetUser(login, password string) (models.User, error)
+	CheckUser(login, password string) (models.User, error)
 }
 
 type User interface {
@@ -30,11 +30,14 @@ type Product interface {
 	DeactivateProduct(id, userid int) error
 }
 
+type Cart interface{}
+
 type Repository struct {
 	Authorization
 	User
 	Category
 	Product
+	Cart
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -43,5 +46,6 @@ func NewRepository(db *gorm.DB) *Repository {
 		User:          NewUserPostgres(db),
 		Category:      NewCategoryPostgres(db),
 		Product:       NewProductPostgres(db),
+		Cart:          NewCartPostgres(db),
 	}
 }

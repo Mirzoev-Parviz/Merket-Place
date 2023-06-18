@@ -15,3 +15,15 @@ type Product struct {
 	Price       float64 `json:"price"`
 	IsActive    bool    `json:"is_active"`
 }
+
+type Cart struct {
+	UserId    int  `json:"user_id"`
+	ProductId int  `json:"product_id"`
+	Quantity  int  `json:"quantity"`
+	PreOrder  bool `json:"preorder"`
+}
+
+type CartItem struct {
+	ProductId int `json:"product_id"`
+	Quantity  int `json:"quantity"`
+}
