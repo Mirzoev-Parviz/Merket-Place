@@ -16,7 +16,7 @@ func NewUserPostgres(db *gorm.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (u *UserPostgres) CheckLogin(login string) (bool, error) {
+func (u *UserPostgres) GetUser(login string) (bool, error) {
 	var user models.User
 	err := config.DB.Where("login = ? AND is_active = TRUE", login).Find(&user).Error
 	if err != nil {

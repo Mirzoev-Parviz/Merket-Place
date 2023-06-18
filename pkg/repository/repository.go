@@ -12,7 +12,7 @@ type Authorization interface {
 }
 
 type User interface {
-	CheckLogin(login string) (bool, error)
+	GetUser(login string) (bool, error)
 	UpdateUser(id int, user models.User) error
 	DeactivateUser(id int) error
 }
