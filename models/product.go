@@ -9,18 +9,21 @@ type Category struct {
 
 type Product struct {
 	Id          int     `json:"id"`
-	UserId      int     `json:"user_id"`
+	UserId      int     `json:"user_id" gorm:"not null; references: users(id)"`
 	Description string  `json:"description"`
 	Category    string  `json:"category"`
 	Price       float64 `json:"price"`
-	IsActive    bool    `json:"is_active"`
+	Quantity    int     `json:"quantity" gorm:"not null; default: 1"`
+	IsActive    bool    `json:"is_active" gorm:"not null; default: true"`
 }
 
-type Cart struct {
-	UserId    int  `json:"user_id"`
-	ProductId int  `json:"product_id"`
-	Quantity  int  `json:"quantity"`
-	PreOrder  bool `json:"preorder"`
+type Basket struct {
+	Id        int     `json:"-" gorm:"primarykey"`
+	UserId    int     `json:"user_id"`
+	ProductId []byte  `json:"product_id"`
+	Quantity  int     `json:"quantity"`
+	TotalSum  float64 `json:"total_sum"`
+	PreOrder  bool    `json:"preorder"`
 }
 
 type CartItem struct {

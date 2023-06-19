@@ -14,8 +14,6 @@ func NewProductService(repo repository.Product) *ProductService {
 }
 
 func (p *ProductService) CreateProduct(userId int, product models.Product) (int, error) {
-	product.UserId = userId
-	product.IsActive = true
 	return p.repo.CreateProduct(userId, product)
 }
 

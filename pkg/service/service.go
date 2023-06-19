@@ -29,11 +29,15 @@ type Product interface {
 	DeactivateProduct(id, userId int) error
 }
 
+type Basket interface {
+}
+
 type Service struct {
 	Authorization
 	User
 	Category
 	Product
+	Basket
 }
 
 func NewService(repo *repository.Repository) *Service {
@@ -42,5 +46,6 @@ func NewService(repo *repository.Repository) *Service {
 		User:          NewUserService(repo),
 		Category:      NewCategoryService(repo),
 		Product:       NewProductService(repo),
+		Basket:        NewBasketService(repo),
 	}
 }

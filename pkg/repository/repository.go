@@ -30,14 +30,16 @@ type Product interface {
 	DeactivateProduct(id, userid int) error
 }
 
-type Cart interface{}
+type Basket interface {
+	AddBasketItem(userId int, product models.Product) error
+}
 
 type Repository struct {
 	Authorization
 	User
 	Category
 	Product
-	Cart
+	Basket
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -46,6 +48,6 @@ func NewRepository(db *gorm.DB) *Repository {
 		User:          NewUserPostgres(db),
 		Category:      NewCategoryPostgres(db),
 		Product:       NewProductPostgres(db),
-		Cart:          NewCartPostgres(db),
+		Basket:        NewBasketPostgres(db),
 	}
 }
