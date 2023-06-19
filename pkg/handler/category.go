@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"market_place/models"
 	"net/http"
 
@@ -27,12 +28,14 @@ func (h *Handler) NewCategory(c *gin.Context) {
 }
 
 func (h *Handler) ShowCategoryProducts(c *gin.Context) {
-	id, err := getId(c)
-	if err != nil {
+	id := getName(c)
+	/*if err != nil {
 		h.logger.Error(err.Error())
 		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
-	}
+	}*/
+
+	fmt.Println(id)
 
 	productList, err := h.services.GetCategoryProducts(id)
 	if err != nil {
@@ -42,4 +45,15 @@ func (h *Handler) ShowCategoryProducts(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, productList)
+}
+
+func (h *Handler) ShowAllCategories(c *gin.Context) {
+	categories, err := h.services.GetAllCategories()
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, categories)
 }

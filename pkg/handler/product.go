@@ -105,3 +105,9 @@ func (h *Handler) DeleteProduct(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
 }
+
+func getName(c *gin.Context) string {
+	name := c.Param("name")
+
+	return name
+}

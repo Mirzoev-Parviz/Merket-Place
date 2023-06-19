@@ -32,14 +32,9 @@ func (c *CategoryPostgres) GetCategory(name string) (category models.Category, e
 	return category, nil
 }
 
-func (c *CategoryPostgres) GetCategoryProducts(id int) (productList []models.Product, err error) {
-	var categ models.Category
-	err = config.DB.Where("id = ?", id).Find(&categ).Error
-	if err != nil {
-		return []models.Product{}, err
-	}
+func (c *CategoryPostgres) GetCategoryProducts(name string) (productList []models.Product, err error) {
 
-	err = config.DB.Where("category = ? AND is_active = TRUE", categ.Name).Find(&productList).Error
+	err = config.DB.Where("category = ? AND is_active = TRUE", name).Find(&productList).Error
 	if err != nil {
 		return []models.Product{}, err
 	}
@@ -48,7 +43,7 @@ func (c *CategoryPostgres) GetCategoryProducts(id int) (productList []models.Pro
 }
 
 func (c *CategoryPostgres) GetAllCategories() (categories []models.Category, err error) {
-	err = config.DB.Where("").Find(&categories).Error
+	err = config.DB.Find(&categories).Error
 	if err != nil {
 		return []models.Category{}, err
 	}

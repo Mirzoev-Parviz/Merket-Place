@@ -18,7 +18,8 @@ type User interface {
 
 type Category interface {
 	CreateNewCategory(category models.Category) (int, error)
-	GetCategoryProducts(id int) ([]models.Product, error)
+	GetCategoryProducts(name string) ([]models.Product, error)
+	GetAllCategories() ([]models.Category, error)
 }
 
 type Product interface {

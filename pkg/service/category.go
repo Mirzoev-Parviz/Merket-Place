@@ -19,6 +19,6 @@ func (c *CategoryService) CreateNewCategory(category models.Category) (int, erro
 func (c *CategoryService) GetAllCategories() ([]models.Category, error) {
 	return c.repo.GetAllCategories()
 }
-func (c *CategoryService) GetCategoryProducts(id int) ([]models.Product, error) {
-	return c.repo.GetCategoryProducts(id)
+func (c *CategoryService) GetCategoryProducts(name string) ([]models.Product, error) {
+	return c.repo.GetCategoryProducts(name)
 }

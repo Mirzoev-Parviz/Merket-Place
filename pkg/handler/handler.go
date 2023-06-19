@@ -37,7 +37,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	category := router.Group("category")
 	{
 		category.POST("/", h.NewCategory)
-		category.GET("/:id", h.ShowCategoryProducts)
+		category.GET("/:name", h.ShowCategoryProducts)
+		category.GET("/", h.ShowAllCategories)
 		// category.PUT("/:id")
 		// category.DELETE("/:id")
 	}
