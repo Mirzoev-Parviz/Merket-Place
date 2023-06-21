@@ -1,15 +1,14 @@
 package models
 
 type Category struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	// ProductId []int  `json:"-" gorm:"not null; default: 0"`
-	Amount int `json:"amount" gorm:"not null; default: 0"`
+	ID       int    `json:"id"`
+	ParentID int    `json:"parent_id"`
+	Name     string `json:"name"`
+	Amount   int    `json:"amount" gorm:"not null; default: 0"`
 }
 
 type Product struct {
-	Id          int     `json:"id"`
-	UserId      int     `json:"user_id" gorm:"not null; references: users(id)"`
+	ID          int     `json:"id"`
 	Description string  `json:"description"`
 	Category    string  `json:"category"`
 	Price       float64 `json:"price"`
@@ -18,12 +17,12 @@ type Product struct {
 }
 
 type Basket struct {
-	Id        int     `json:"-" gorm:"primarykey"`
-	UserId    int     `json:"user_id"`
-	ProductId []byte  `json:"product_id"`
-	Quantity  int     `json:"quantity"`
-	TotalSum  float64 `json:"total_sum"`
-	PreOrder  bool    `json:"preorder"`
+	ID       int       `json:"-" gorm:"primarykey"`
+	UserId   int       `json:"user_id"`
+	Products []Product `json:"products"`
+	Quantity int       `json:"quantity"`
+	TotalSum float64   `json:"total_sum"`
+	PreOrder bool      `json:"preorder"`
 }
 
 type CartItem struct {

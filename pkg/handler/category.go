@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"market_place/models"
 	"net/http"
 
@@ -34,8 +33,6 @@ func (h *Handler) ShowCategoryProducts(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
 	}*/
-
-	fmt.Println(id)
 
 	productList, err := h.services.GetCategoryProducts(id)
 	if err != nil {

@@ -22,7 +22,7 @@ func (p *ProductPostgres) CreateProduct(userId int, product models.Product) (int
 
 	SaveProduct(product.Category)
 
-	return product.Id, nil
+	return product.ID, nil
 }
 
 func (p *ProductPostgres) GetProduct(id int) (product models.Product, err error) {
@@ -63,4 +63,30 @@ func (p *ProductPostgres) DeactivateProduct(id, userId int) error {
 	}
 
 	return nil
+}
+
+//Adding product to merchants
+
+func (p *ProductPostgres) AddProductToShelf(m_id, id, quantity int) (int, error) {
+	tx := config.DB.Begin()
+
+	var product models.Product
+
+	err := config.DB.Where("id = ? AND quantity >= ? AND  is_active = TRUE", id, quantity).Find(&product).Error
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	product.Quantity -= quantity
+
+	var merch models.MerchantProduct
+	merch.MerchantID = m_id
+	merch.ProductID = product.ID
+
+	if err = config.DB.Create(&merch).Error; err != nil {
+		return 0, err
+	}
+
+	return int(merch.ID), nil
 }

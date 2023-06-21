@@ -20,7 +20,7 @@ func (c *CategoryPostgres) CreateNewCategory(category models.Category) (int, err
 		return 0, err
 	}
 
-	return category.Id, nil
+	return category.ID, nil
 }
 
 func (c *CategoryPostgres) GetCategory(name string) (category models.Category, err error) {

@@ -43,6 +43,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		// category.DELETE("/:id")
 	}
 
+	user := router.Group("user")
+	{
+		// user.GET("/:id")
+		user.PUT("/:id", h.UpdateUser)
+		user.DELETE("/:id", h.DeleteUser)
+	}
+
 	api := router.Group("api")
 	{
 
@@ -52,13 +59,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			product.GET("/:id", h.ShowProduct)
 			product.PUT("/:id", h.UserIdentity, h.UpdateProduct)
 			product.DELETE("/:id", h.UserIdentity, h.DeleteProduct)
-		}
-
-		user := router.Group("user")
-		{
-			// user.GET("/:id")
-			user.PUT("/:id", h.UpdateUser)
-			user.DELETE("/:id", h.DeleteUser)
 		}
 
 	}

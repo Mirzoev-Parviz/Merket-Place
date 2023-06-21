@@ -17,6 +17,10 @@ type User interface {
 	DeactivateUser(id int) error
 }
 
+type Merchant interface {
+	CreateMerchant(merch models.Merchant) (int, error)
+}
+
 type Category interface {
 	CreateNewCategory(categ models.Category) (int, error)
 	GetAllCategories() ([]models.Category, error)
@@ -28,6 +32,8 @@ type Product interface {
 	GetProduct(id int) (models.Product, error)
 	UpdateProduct(id, userId int, product models.Product) error
 	DeactivateProduct(id, userid int) error
+
+	AddProductToShelf(m_id, id, quantiry int) (int, error)
 }
 
 type Basket interface {
@@ -37,6 +43,7 @@ type Basket interface {
 type Repository struct {
 	Authorization
 	User
+	Merchant
 	Category
 	Product
 	Basket
@@ -46,6 +53,7 @@ func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
 		User:          NewUserPostgres(db),
+		Merchant:      NewMerchPostgres(db),
 		Category:      NewCategoryPostgres(db),
 		Product:       NewProductPostgres(db),
 		Basket:        NewBasketPostgres(db),

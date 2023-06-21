@@ -46,7 +46,7 @@ func (h *Handler) ShowProduct(c *gin.Context) {
 		return
 	}
 
-	if product.Id == 0 {
+	if product.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"message": "product not found"})
 		return
 	}

@@ -22,7 +22,6 @@ func (b *BasketPostgres) AddBasketItem(userId int, product models.Product) error
 		return err
 	}
 
-	basket.ProductId = append(basket.ProductId, byte(product.Id))
 	basket.TotalSum += product.Price
 
 	if err = config.DB.Save(&basket).Error; err != nil {
