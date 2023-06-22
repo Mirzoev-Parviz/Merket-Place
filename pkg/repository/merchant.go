@@ -61,14 +61,43 @@ func (m *MerchPostgres) DeleteMerchant(id int) error {
 func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, error) {
 	tx := config.DB.Begin()
 
-	if err := ChangeProductQuantity(merch.ProductID, merch.Quantity); err != nil {
-		tx.Rollback()
+	exist, err := ExistMerchantProduct(merch.MerchantID, merch.ProductID)
+	if err != nil {
 		return 0, err
 	}
 
-	if err := config.DB.Create(&merch).Error; err != nil {
-		tx.Rollback()
-		return 0, err
+	if exist {
+		if err := ChangeProductQuantity(merch.ProductID, merch.Quantity); err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+
+		var test models.MerchantProduct
+
+		if err := config.DB.Where("merchant_id = ? AND product_id = ? AND is_active = TRUE",
+			merch.MerchantID, merch.ProductID).First(&test).Error; err != nil {
+			tx.Rollback()
+			return 0, nil
+		}
+
+		merch.Quantity += test.Quantity
+
+		err := config.DB.Where("merchant_id = ? AND product_id = ? AND is_active = TRUE",
+			merch.MerchantID, merch.ProductID).Updates(&merch).Error
+		// fmt.Println(merch.MerchantID)
+		if err != nil {
+			return 0, err
+		}
+
+	} else {
+		if err := ChangeProductQuantity(merch.ProductID, merch.Quantity); err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+		if err := config.DB.Create(&merch).Error; err != nil {
+			tx.Rollback()
+			return 0, err
+		}
 	}
 
 	return int(merch.ID), nil
@@ -85,9 +114,9 @@ func (m *MerchPostgres) GetMerchProduct(id int) (mp models.MerchantProduct, err 
 
 func (m *MerchPostgres) UpdateMerchProduct(id int, merch models.MerchantProduct) error {
 
-	if err := ChangeProductQuantity(merch.ProductID, merch.Quantity); err != nil {
+	/*if err := ChangeProductQuantity(merch.ProductID, merch.Quantity); err != nil {
 		return err
-	}
+	}*/
 
 	err := config.DB.Where("id = ? AND is_active = TRUE", id).Updates(&merch).Error
 	if err != nil {
@@ -130,4 +159,23 @@ func ChangeProductQuantity(id, quantity int) error {
 	}
 
 	return nil
+}
+
+func ExistMerchantProduct(merchantID, productID int) (bool, error) {
+	var merchantP models.MerchantProduct
+	err := config.DB.Where("merchant_id = ? AND product_id = ? AND is_active = TRUE",
+		merchantID, productID).Find(&merchantP).Error
+	if err != nil {
+		return true, err
+	}
+
+	if merchantP.ID == 0 {
+		return false, nil
+	}
+
+	if merchantP.ID > 0 {
+		return true, nil
+	}
+
+	return false, nil
 }
