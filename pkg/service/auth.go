@@ -15,9 +15,14 @@ type AuthService struct {
 	repo repository.Authorization
 }
 
-type tokenClaims struct {
+type userTokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"user_id"`
+	UserID int `json:"user_id"`
+}
+
+type merchTokenClaims struct {
+	jwt.StandardClaims
+	MerchantID int `json:"merchant_id"`
 }
 
 const (
@@ -41,24 +46,40 @@ func generatePasswordHash(password string) string {
 
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
-func (a *AuthService) GenerateToken(login, password string) (string, error) {
+func (a *AuthService) GenerateUserToken(login, password string) (string, error) {
 	user, err := a.repo.CheckUser(login, generatePasswordHash(password))
 	if err != nil {
 		return "", err
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &userTokenClaims{
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(12 * time.Hour).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		user.Id,
+		user.ID,
 	})
 
 	return token.SignedString([]byte(signingKey))
 }
-func (a *AuthService) ParseToken(accessToken string) (int, error) {
-	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (a *AuthService) GenerateMerchantToken(login, password string) (string, error) {
+	merch, err := a.repo.CheckMerch(login, generatePasswordHash(password))
+	if err != nil {
+		return "", err
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &merchTokenClaims{
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(12 * time.Hour).Unix(),
+			IssuedAt:  time.Now().Unix(),
+		},
+		merch.ID,
+	})
+
+	return token.SignedString([]byte(signingKey))
+}
+func (a *AuthService) ParseUserToken(accessToken string) (int, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &userTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 
@@ -71,10 +92,32 @@ func (a *AuthService) ParseToken(accessToken string) (int, error) {
 		return 0, err
 	}
 
-	claims, ok := token.Claims.(*tokenClaims)
+	claims, ok := token.Claims.(*userTokenClaims)
 	if !ok {
-		return 0, errors.New("token claims are not of type *tokenClaims")
+		return 0, errors.New("token claims are not of type *userTokenClaims")
 	}
 
-	return claims.UserId, nil
+	return claims.UserID, nil
+}
+
+func (a *AuthService) ParseMerchantToken(accessToken string) (int, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &merchTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+
+		}
+
+		return []byte(signingKey), nil
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	claims, ok := token.Claims.(*merchTokenClaims)
+	if !ok {
+		return 0, errors.New("token claims are not of type *merchTokenClaims")
+	}
+
+	return claims.MerchantID, nil
 }

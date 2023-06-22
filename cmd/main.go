@@ -22,8 +22,8 @@ func main() {
 	logger := logging.GetLogger()
 	logger.Info("create router")
 
-	config.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Product{}, &models.Basket{},
-		&models.Merchant{})
+	config.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Product{},
+		&models.Merchant{}, &models.MerchantProduct{})
 	db := config.ConnectDB()
 	defer config.Disconnect(db)
 

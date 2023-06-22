@@ -21,7 +21,7 @@ func (a *AuthPostgres) CreateUser(user models.User) (int, error) {
 		return 0, err
 	}
 
-	return user.Id, nil
+	return user.ID, nil
 }
 
 func (a *AuthPostgres) CheckUser(login, password string) (user models.User, err error) {
@@ -31,4 +31,13 @@ func (a *AuthPostgres) CheckUser(login, password string) (user models.User, err 
 	}
 
 	return user, nil
+}
+
+func (a *AuthPostgres) CheckMerch(login, password string) (merch models.Merchant, err error) {
+	err = config.DB.Where("login = ? AND password = ? AND is_active = TRUE", login, password).First(&merch).Error
+	if err != nil {
+		return models.Merchant{}, err
+	}
+
+	return merch, nil
 }

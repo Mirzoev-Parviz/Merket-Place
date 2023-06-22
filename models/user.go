@@ -1,5 +1,7 @@
 package models
 
+import "gorm.io/gorm"
+
 type Contact struct {
 	Phone   uint   `json:"phone"`
 	Email   string `json:"email"`
@@ -7,7 +9,8 @@ type Contact struct {
 }
 
 type User struct {
-	Id       int     `json:"id" gorm:"primarykey"`
+	gorm.Model
+	ID       int     `json:"id" gorm:"primarykey"`
 	FullName string  `json:"full_name"`
 	Login    string  `json:"login" `
 	Password string  `json:"password"`

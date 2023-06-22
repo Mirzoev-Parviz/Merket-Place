@@ -9,6 +9,7 @@ import (
 type Authorization interface {
 	CreateUser(user models.User) (int, error)
 	CheckUser(login, password string) (models.User, error)
+	CheckMerch(login, password string) (models.Merchant, error)
 }
 
 type User interface {
@@ -19,6 +20,14 @@ type User interface {
 
 type Merchant interface {
 	CreateMerchant(merch models.Merchant) (int, error)
+	GetMerchant(id int) (models.Merchant, error)
+	UpdateMerchant(id int, merch models.Merchant) error
+	DeleteMerchant(id int) error
+
+	AddProductToShelf(merch models.MerchantProduct) (int, error)
+	GetMerchProduct(id int) (models.MerchantProduct, error)
+	UpdateMerchProduct(id int, merch models.MerchantProduct) error
+	DeleteMerchProduct(id int) error
 }
 
 type Category interface {
@@ -32,8 +41,6 @@ type Product interface {
 	GetProduct(id int) (models.Product, error)
 	UpdateProduct(id, userId int, product models.Product) error
 	DeactivateProduct(id, userid int) error
-
-	AddProductToShelf(m_id, id, quantiry int) (int, error)
 }
 
 type Basket interface {

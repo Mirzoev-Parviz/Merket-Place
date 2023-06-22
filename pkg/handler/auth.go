@@ -45,7 +45,7 @@ func (h *Handler) SignIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.services.GenerateToken(input.Login, input.Password)
+	token, err := h.services.GenerateUserToken(input.Login, input.Password)
 	if err != nil {
 		h.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "no such user exists"})
@@ -55,8 +55,44 @@ func (h *Handler) SignIn(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
+func (h *Handler) MerchSignUp(c *gin.Context) {
+	var input models.Merchant
+	if err := c.BindJSON(&input); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	id, err := h.services.CreateMerchant(input)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": id})
+}
+
+func (h *Handler) MerchSignIn(c *gin.Context) {
+	var input models.SignInput
+	if err := c.BindJSON(&input); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	token, err := h.services.GenerateMerchantToken(input.Login, input.Password)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": token})
+}
+
 func (h *Handler) ShowID(c *gin.Context) {
-	userId, err := getUserId(c)
+	userId, err := getMerchID(c)
 	if err != nil {
 		h.logger.Error(err.Error())
 		// c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -68,6 +104,20 @@ func (h *Handler) ShowID(c *gin.Context) {
 
 func getUserId(c *gin.Context) (int, error) {
 	id, ok := c.Get(userCtx)
+	if !ok {
+		return 0, errors.New("errors while parsing token")
+	}
+
+	idInt, ok := id.(int)
+	if !ok {
+		return 0, errors.New("error while parsing token")
+	}
+
+	return idInt, nil
+}
+
+func getMerchID(c *gin.Context) (int, error) {
+	id, ok := c.Get(merchCtx)
 	if !ok {
 		return 0, errors.New("errors while parsing token")
 	}

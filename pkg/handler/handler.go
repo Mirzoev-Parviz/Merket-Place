@@ -43,22 +43,42 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		// category.DELETE("/:id")
 	}
 
-	user := router.Group("user")
-	{
-		// user.GET("/:id")
-		user.PUT("/:id", h.UpdateUser)
-		user.DELETE("/:id", h.DeleteUser)
-	}
-
 	api := router.Group("api")
 	{
 
-		product := api.Group("product")
+		user := api.Group("user")
 		{
-			product.POST("/", h.UserIdentity, h.AddProduct)
-			product.GET("/:id", h.ShowProduct)
-			product.PUT("/:id", h.UserIdentity, h.UpdateProduct)
-			product.DELETE("/:id", h.UserIdentity, h.DeleteProduct)
+			// user.GET("/:id")
+			user.PUT("/:id", h.UpdateUser)
+			user.DELETE("/:id", h.DeleteUser)
+
+			product := api.Group("product")
+			{
+				product.POST("/", h.UserIdentity, h.AddProduct)
+				product.GET("/:id", h.ShowProduct)
+				product.PUT("/:id", h.UserIdentity, h.UpdateProduct)
+				product.DELETE("/:id", h.UserIdentity, h.DeleteProduct)
+			}
+
+		}
+
+		merchant := router.Group("merchant")
+		{
+			merchant.POST("/sign-up", h.MerchSignUp)
+			merchant.POST("/sign-in", h.MerchSignIn)
+			// merchant.GET("/id", h.MerchIdentity, h.ShowID)
+			merchant.GET("/:id", h.GetMerchant)
+			merchant.PUT("/:id", h.MerchIdentity, h.UpdateMerchant)
+			merchant.DELETE("/:id", h.MerchIdentity, h.DeleteMerchant)
+
+			product := merchant.Group("product", h.MerchIdentity)
+			{
+				product.POST("/", h.AddProductToShelf)
+				product.GET("/:id", h.GetMerchantProduct)
+				product.PUT("/:id", h.UpdateMerchProduct)
+				product.DELETE("/:id", h.DeleteMerchProduct)
+			}
+
 		}
 
 	}

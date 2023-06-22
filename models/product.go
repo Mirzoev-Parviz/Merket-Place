@@ -17,7 +17,7 @@ type Product struct {
 }
 
 type Basket struct {
-	ID       int       `json:"-" gorm:"primarykey"`
+	Id       int       `json:"-" gorm:"primarykey"`
 	UserId   int       `json:"user_id"`
 	Products []Product `json:"products"`
 	Quantity int       `json:"quantity"`

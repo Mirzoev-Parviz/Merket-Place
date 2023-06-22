@@ -35,7 +35,7 @@ func (p *ProductPostgres) GetProduct(id int) (product models.Product, err error)
 }
 
 func (p *ProductPostgres) UpdateProduct(id, userId int, product models.Product) error {
-	err := config.DB.Where("id = ? AND user_id = ? AND is_active = TRUE", id, userId).Updates(&product).Error
+	err := config.DB.Where("id = ?  AND is_active = TRUE", id).Updates(&product).Error
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func (p *ProductPostgres) UpdateProduct(id, userId int, product models.Product) 
 
 func (p *ProductPostgres) DeactivateProduct(id, userId int) error {
 	var product models.Product
-	err := config.DB.Where("id = ? AND user_id = ? AND is_active = TRUE", id, userId).First(&product).Error
+	err := config.DB.Where("id = ? AND is_active = TRUE", id).First(&product).Error
 	if err != nil {
 		return err
 	}
@@ -63,30 +63,4 @@ func (p *ProductPostgres) DeactivateProduct(id, userId int) error {
 	}
 
 	return nil
-}
-
-//Adding product to merchants
-
-func (p *ProductPostgres) AddProductToShelf(m_id, id, quantity int) (int, error) {
-	tx := config.DB.Begin()
-
-	var product models.Product
-
-	err := config.DB.Where("id = ? AND quantity >= ? AND  is_active = TRUE", id, quantity).Find(&product).Error
-	if err != nil {
-		tx.Rollback()
-		return 0, err
-	}
-
-	product.Quantity -= quantity
-
-	var merch models.MerchantProduct
-	merch.MerchantID = m_id
-	merch.ProductID = product.ID
-
-	if err = config.DB.Create(&merch).Error; err != nil {
-		return 0, err
-	}
-
-	return int(merch.ID), nil
 }
