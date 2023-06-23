@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Category struct {
 	ID       int    `json:"id"`
 	ParentID int    `json:"parent_id"`
@@ -17,16 +19,22 @@ type Product struct {
 	IsActive    bool    `json:"is_active" gorm:"not null; default: true"`
 }
 
-type Basket struct {
-	Id       int       `json:"-" gorm:"primarykey"`
-	UserId   int       `json:"user_id"`
-	Products []Product `json:"products"`
-	Quantity int       `json:"quantity"`
-	TotalSum float64   `json:"total_sum"`
-	PreOrder bool      `json:"preorder"`
+type Cart struct {
+	ID        int        `json:"id" gorm:"primarykey"`
+	UserID    int        `json:"user_id" gorm:"not null; references: users(id)"`
+	Items     []CartItem `json:"items"`
+	Quantity  int        `json:"quantity"`
+	TotalSum  float64    `json:"total_sum"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
 }
 
 type CartItem struct {
-	ProductId int `json:"product_id"`
-	Quantity  int `json:"quantity"`
+	ID         int       `json:"id" gorm:"primarykey"`
+	CartID     int       `json:"cart_id"`
+	ProductID  int       `json:"product_id"`
+	MerchantID int       `json:"merchant_id"`
+	Quantity   int       `json:"quantity"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }

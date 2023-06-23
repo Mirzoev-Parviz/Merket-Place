@@ -14,7 +14,7 @@ func NewUserService(repo repository.User) *UserService {
 }
 
 func (u *UserService) CheckLogin(login string) (bool, error) {
-	return u.repo.GetUser(login)
+	return u.repo.CheckLogin(login)
 }
 func (u *UserService) UpdateUser(id int, user models.User) error {
 	user.Password = generatePasswordHash(user.Password)
@@ -22,4 +22,7 @@ func (u *UserService) UpdateUser(id int, user models.User) error {
 }
 func (u *UserService) DeactivateUser(id int) error {
 	return u.repo.DeactivateUser(id)
+}
+func (u *UserService) GetUser(userID int) (models.User, error) {
+	return u.repo.GetUser(userID)
 }

@@ -3,7 +3,7 @@ package models
 import "gorm.io/gorm"
 
 type Contact struct {
-	Phone   uint   `json:"phone"`
+	Phone   uint   `json:"phone" binding:"required"`
 	Email   string `json:"email"`
 	Address string `json:"address"`
 }
@@ -15,7 +15,7 @@ type User struct {
 	Login    string  `json:"login" `
 	Password string  `json:"password"`
 	Contacts Contact `json:"contacts" gorm:"embedded;embeddedPrefix:contacts"`
-	Role     string  `json:"role"`
+	Role     string  `json:"role" binding:"required"`
 	IsActive bool    `json:"is_active" gorm:"not null; default: true"`
 }
 

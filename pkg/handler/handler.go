@@ -48,9 +48,10 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 		user := api.Group("user")
 		{
-			// user.GET("/:id")
-			user.PUT("/:id", h.UpdateUser)
-			user.DELETE("/:id", h.DeleteUser)
+			user.GET("/:id", h.GetUser)
+			user.PUT("/:id", h.UserIdentity, h.UpdateUser)
+			user.DELETE("/:id", h.UserIdentity, h.DeleteUser)
+			user.POST("/", h.UserIdentity, h.BuyIt)
 
 			product := api.Group("product")
 			{
@@ -60,13 +61,17 @@ func (h *Handler) InitRoutes() *gin.Engine {
 				product.DELETE("/:id", h.UserIdentity, h.DeleteProduct)
 			}
 
+			cart := api.Group("cart", h.UserIdentity)
+			{
+				cart.POST("/item", h.AddCartItem)
+			}
+
 		}
 
-		merchant := router.Group("merchant")
+		merchant := api.Group("merchant")
 		{
 			merchant.POST("/sign-up", h.MerchSignUp)
 			merchant.POST("/sign-in", h.MerchSignIn)
-			// merchant.GET("/id", h.MerchIdentity, h.ShowID)
 			merchant.GET("/:id", h.GetMerchant)
 			merchant.PUT("/:id", h.MerchIdentity, h.UpdateMerchant)
 			merchant.DELETE("/:id", h.MerchIdentity, h.DeleteMerchant)
@@ -78,7 +83,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 				product.PUT("/:id", h.UpdateMerchProduct)
 				product.DELETE("/:id", h.DeleteMerchProduct)
 			}
-
 		}
 
 	}

@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"market_place/config"
 	"market_place/models"
 
@@ -16,7 +15,16 @@ func NewUserPostgres(db *gorm.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (u *UserPostgres) GetUser(login string) (bool, error) {
+func (u *UserPostgres) GetUser(userID int) (user models.User, err error) {
+	err = config.DB.Where("id = ? AND is_active = TRUE", userID).First(&user).Error
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
+}
+
+func (u *UserPostgres) CheckLogin(login string) (bool, error) {
 	var user models.User
 	err := config.DB.Where("login = ? AND is_active = TRUE", login).Find(&user).Error
 	if err != nil {
@@ -39,8 +47,7 @@ func (u *UserPostgres) UpdateUser(id int, user models.User) error {
 	return nil
 }
 
-/*
-func (u *UserPostgres) DeleteUser(id int) error {
+func (u *UserPostgres) DeactivateUser(id int) error {
 	var user models.User
 
 	if err := config.DB.Where("id = ? AND is_active = TRUE").First(&user).Error; err != nil {
@@ -54,9 +61,9 @@ func (u *UserPostgres) DeleteUser(id int) error {
 	}
 
 	return nil
-}*/
+}
 
-// Да, я для удаление пользователя использую транзакции, и что?
+/*
 func (u *UserPostgres) DeactivateUser(id int) error {
 	tx := config.DB.Begin()
 
@@ -78,3 +85,4 @@ func (u *UserPostgres) DeactivateUser(id int) error {
 
 	return nil
 }
+*/

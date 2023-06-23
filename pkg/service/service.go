@@ -14,6 +14,7 @@ type Authorization interface {
 }
 type User interface {
 	CheckLogin(login string) (bool, error)
+	GetUser(userID int) (models.User, error)
 	UpdateUser(id int, user models.User) error
 	DeactivateUser(id int) error
 }
@@ -43,7 +44,10 @@ type Product interface {
 	DeactivateProduct(id, userId int) error
 }
 
-type Basket interface {
+type Cart interface {
+	CreateCart(userId int) error
+	AddCartItem(userID int, item models.CartItem) (int, error)
+	BuyIt(userID int) error
 }
 
 type Service struct {
@@ -52,7 +56,7 @@ type Service struct {
 	Merchant
 	Category
 	Product
-	Basket
+	Cart
 }
 
 func NewService(repo *repository.Repository) *Service {
@@ -62,6 +66,6 @@ func NewService(repo *repository.Repository) *Service {
 		Merchant:      NewMerchService(repo),
 		Category:      NewCategoryService(repo),
 		Product:       NewProductService(repo),
-		Basket:        NewBasketService(repo),
+		Cart:          NewCartService(repo),
 	}
 }

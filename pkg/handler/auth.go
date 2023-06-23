@@ -35,6 +35,14 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
+	if input.Role == "buyer" {
+		err = h.services.CreateCart(id)
+		if err != nil {
+			h.logger.Error(err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			return
+		}
+	}
 	c.JSON(http.StatusOK, gin.H{"message": id})
 }
 

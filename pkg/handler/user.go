@@ -8,8 +8,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (h *Handler) GetUser(c *gin.Context) {
+	userID, err := getId(c)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	user, err := h.services.GetUser(userID)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
+}
+
 func (h *Handler) UpdateUser(c *gin.Context) {
-	id, err := getId(c)
+	id, err := getUserId(c)
 	if err != nil {
 		h.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})

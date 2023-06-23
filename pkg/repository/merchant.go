@@ -84,7 +84,6 @@ func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, er
 
 		err := config.DB.Where("merchant_id = ? AND product_id = ? AND is_active = TRUE",
 			merch.MerchantID, merch.ProductID).Updates(&merch).Error
-		// fmt.Println(merch.MerchantID)
 		if err != nil {
 			return 0, err
 		}
@@ -99,7 +98,7 @@ func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, er
 			return 0, err
 		}
 	}
-
+	tx.Commit()
 	return int(merch.ID), nil
 }
 
@@ -113,11 +112,6 @@ func (m *MerchPostgres) GetMerchProduct(id int) (mp models.MerchantProduct, err 
 }
 
 func (m *MerchPostgres) UpdateMerchProduct(id int, merch models.MerchantProduct) error {
-
-	/*if err := ChangeProductQuantity(merch.ProductID, merch.Quantity); err != nil {
-		return err
-	}*/
-
 	err := config.DB.Where("id = ? AND is_active = TRUE", id).Updates(&merch).Error
 	if err != nil {
 		return err
