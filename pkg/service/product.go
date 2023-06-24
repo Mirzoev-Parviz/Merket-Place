@@ -13,8 +13,8 @@ func NewProductService(repo repository.Product) *ProductService {
 	return &ProductService{repo: repo}
 }
 
-func (p *ProductService) CreateProduct(userId int, product models.Product) (int, error) {
-	return p.repo.CreateProduct(userId, product)
+func (p *ProductService) CreateProduct(product models.Product) (int, error) {
+	return p.repo.CreateProduct(product)
 }
 
 func (p *ProductService) GetProduct(id int) (models.Product, error) {

@@ -158,3 +158,21 @@ func (h *Handler) DeleteMerchProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
 
 }
+
+func (h *Handler) SearchMerchProducts(c *gin.Context) {
+	var query models.Search
+	if err := c.BindJSON(&query); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	products, err := h.services.SearchMerchProduct(query.Query)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, products)
+}

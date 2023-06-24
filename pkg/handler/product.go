@@ -8,13 +8,6 @@ import (
 )
 
 func (h *Handler) AddProduct(c *gin.Context) {
-	userId, err := getUserId(c)
-	if err != nil {
-		h.logger.Error(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-
 	var input models.Product
 
 	if err := c.BindJSON(&input); err != nil {
@@ -23,7 +16,7 @@ func (h *Handler) AddProduct(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.CreateProduct(userId, input)
+	id, err := h.services.CreateProduct(input)
 	if err != nil {
 		h.logger.Error(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})

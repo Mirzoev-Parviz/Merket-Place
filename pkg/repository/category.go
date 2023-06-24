@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"market_place/config"
 	"market_place/models"
 
@@ -27,6 +28,10 @@ func (c *CategoryPostgres) GetCategory(name string) (category models.Category, e
 	err = config.DB.Where("name = ?", name).Find(&category).Error
 	if err != nil {
 		return models.Category{}, err
+	}
+
+	if category.ID == 0 {
+		return models.Category{}, errors.New("category not found")
 	}
 
 	return category, nil

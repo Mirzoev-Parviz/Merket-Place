@@ -29,6 +29,8 @@ type Merchant interface {
 	GetMerchProduct(id int) (models.MerchantProduct, error)
 	UpdateMerchProduct(id int, merch models.MerchantProduct) error
 	DeleteMerchProduct(id int) error
+
+	SearchMerchProduct(query string) ([]models.MerchantProduct, error)
 }
 
 type Category interface {
@@ -38,7 +40,7 @@ type Category interface {
 }
 
 type Product interface {
-	CreateProduct(userId int, product models.Product) (int, error)
+	CreateProduct(product models.Product) (int, error)
 	GetProduct(id int) (models.Product, error)
 	UpdateProduct(id, userId int, product models.Product) error
 	DeactivateProduct(id, userid int) error

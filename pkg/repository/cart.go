@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"market_place/config"
 	"market_place/models"
 
@@ -34,12 +33,6 @@ func (c *CartPostgres) AddCartItem(userID int, item models.CartItem) (id int, er
 	if err != nil {
 		return 0, err
 	}
-
-	/*err = ChangeMerchantQuantity(item.MerchantID, item.ProductID, item.Quantity)
-	if err != nil {
-		tx.Rollback()
-		return 0, err
-	}*/
 
 	if err = config.DB.Create(&item).Error; err != nil {
 		tx.Rollback()
@@ -83,17 +76,12 @@ func GetCartID(userID int) (int, error) {
 
 func ChangeMerchantQuantity(merchantID, productID, quantity int) error {
 	var merchProd models.MerchantProduct
-	fmt.Printf("merch_id:%v\nproduct_id:%v\n", merchantID, productID)
 	err := config.DB.Where("product_id = ? AND merchant_id = ? AND is_active = TRUE", productID, merchantID).First(&merchProd).Error
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(merchProd)
-
 	tx := config.DB.Begin()
-
-	fmt.Println(merchProd.ID)
 	merchProd.Quantity -= quantity
 
 	if err = config.DB.Save(&merchProd).Error; err != nil {

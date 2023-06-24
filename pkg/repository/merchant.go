@@ -136,6 +136,20 @@ func (m *MerchPostgres) DeleteMerchProduct(id int) error {
 	return nil
 }
 
+func (m *MerchPostgres) SearchMerchProduct(query string) (products []models.MerchantProduct, err error) {
+	productIdes, err := GetProductByQuery(query)
+	if err != nil {
+		return []models.MerchantProduct{}, err
+	}
+
+	err = config.DB.Where("product_id IN (?) AND is_active = TRUE", productIdes).Find(&products).Error
+	if err != nil {
+		return []models.MerchantProduct{}, err
+	}
+
+	return products, nil
+}
+
 func ChangeProductQuantity(id, quantity int) error {
 	tx := config.DB.Begin()
 

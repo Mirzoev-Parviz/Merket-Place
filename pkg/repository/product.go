@@ -15,12 +15,15 @@ func NewProductPostgres(db *gorm.DB) *ProductPostgres {
 	return &ProductPostgres{db: db}
 }
 
-func (p *ProductPostgres) CreateProduct(userId int, product models.Product) (int, error) {
-	if err := config.DB.Create(&product).Error; err != nil {
-		return 0, nil
+func (p *ProductPostgres) CreateProduct(product models.Product) (int, error) {
+	err := SaveProduct(product.Category)
+	if err != nil {
+		return 0, err
 	}
 
-	SaveProduct(product.Category)
+	if err := config.DB.Create(&product).Error; err != nil {
+		return 0, err
+	}
 
 	return product.ID, nil
 }
@@ -63,4 +66,13 @@ func (p *ProductPostgres) DeactivateProduct(id, userId int) error {
 	}
 
 	return nil
+}
+
+func GetProductByQuery(query string) (product_ides []uint, err error) {
+	err = config.DB.Select("id").Where("title LIKE ? AND is_active = TRUE", "%"+query+"%").Table("products").Find(&product_ides).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return product_ides, nil
 }

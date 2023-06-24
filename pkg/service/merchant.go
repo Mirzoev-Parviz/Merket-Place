@@ -45,3 +45,7 @@ func (m *MerchService) UpdateMerchProduct(id int, merch models.MerchantProduct) 
 func (m *MerchService) DeleteMerchProduct(id int) error {
 	return m.repo.DeleteMerchProduct(id)
 }
+
+func (m *MerchService) SearchMerchProduct(query string) ([]models.MerchantProduct, error) {
+	return m.repo.SearchMerchProduct(query)
+}
