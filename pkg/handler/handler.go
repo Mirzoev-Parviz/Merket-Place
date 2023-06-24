@@ -84,6 +84,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 				product.DELETE("/:id", h.MerchIdentity, h.DeleteMerchProduct)
 
 				product.POST("/search", h.SearchMerchProducts)
+				product.POST("/filter", h.GetFilterdProducts)
 			}
 		}
 

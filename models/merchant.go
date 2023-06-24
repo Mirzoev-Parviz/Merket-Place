@@ -14,9 +14,12 @@ type Merchant struct {
 
 type MerchantProduct struct {
 	gorm.Model
-	ProductID  int     `json:"product_id"`
-	MerchantID int     `json:"merchant_id"`
-	Quantity   int     `json:"quantity" gorm:"not null; default: 1"`
-	Price      float64 `json:"price" gorm:"references: prdocts(price)"`
-	IsActive   bool    `json:"is_active" gorm:"not null; default: true"`
+	ProductID   int     `json:"product_id"`
+	MerchantID  int     `json:"merchant_id"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Category    string  `json:"category"`
+	Quantity    int     `json:"quantity" gorm:"not null; default: 1"`
+	Price       float64 `json:"price" gorm:"references: prdocts(price)"`
+	IsActive    bool    `json:"is_active" gorm:"not null; default: true"`
 }

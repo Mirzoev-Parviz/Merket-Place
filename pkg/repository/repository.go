@@ -31,12 +31,14 @@ type Merchant interface {
 	DeleteMerchProduct(id int) error
 
 	SearchMerchProduct(query string) ([]models.MerchantProduct, error)
+	GetFilterdProducts(input models.Filter) ([]models.MerchantProduct, error)
 }
 
 type Category interface {
 	CreateNewCategory(categ models.Category) (int, error)
 	GetAllCategories() ([]models.Category, error)
 	GetCategoryProducts(name string) ([]models.Product, error)
+	CheckCategoryName(name string) (bool, error)
 }
 
 type Product interface {

@@ -71,3 +71,19 @@ func SaveProduct(name string) error {
 
 	return nil
 }
+
+func (c *CategoryPostgres) CheckCategoryName(name string) (bool, error) {
+	var category models.Category
+	err := config.DB.Where("name = ? AND is_active = TRUE", name).Find(&category).Error
+	if err != nil {
+		return true, err
+	}
+
+	// fmt.Println(category.Name)
+
+	if category.Name != "" {
+		return true, nil
+	}
+
+	return false, nil
+}

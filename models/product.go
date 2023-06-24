@@ -7,6 +7,7 @@ type Category struct {
 	ParentID int    `json:"parent_id"`
 	Name     string `json:"name"`
 	Amount   int    `json:"amount" gorm:"not null; default: 0"`
+	IsActive bool   `json:"is_active" gorm:"not null; default: true"`
 }
 
 type Product struct {
@@ -27,6 +28,7 @@ type Cart struct {
 	TotalSum  float64    `json:"total_sum"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
+	IsActive  bool       `json:"is_active" gorm:"not null; default: true"`
 }
 
 type CartItem struct {
@@ -37,8 +39,20 @@ type CartItem struct {
 	Quantity   int       `json:"quantity"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+	IsActive   bool      `json:"is_active" gorm:"not null; default: true"`
 }
 
 type Search struct {
 	Query string `json:"query"`
+}
+
+type Filter struct {
+	Category   string  `json:"category"`
+	Price      float64 `json:"price"`
+	MerchantID int     `json:"merchant_id"`
+}
+
+type ProductInfo struct {
+	Product  Product `json:"product"`
+	Merchant string  `json:"merchant"`
 }

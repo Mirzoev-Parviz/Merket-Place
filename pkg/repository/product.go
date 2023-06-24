@@ -76,3 +76,12 @@ func GetProductByQuery(query string) (product_ides []uint, err error) {
 
 	return product_ides, nil
 }
+
+func GetProductInfo(id int) (product models.Product, err error) {
+	err = config.DB.Where("id = ? AND is_active = TRUE", id).First(&product).Error
+	if err != nil {
+		return models.Product{}, err
+	}
+
+	return product, nil
+}

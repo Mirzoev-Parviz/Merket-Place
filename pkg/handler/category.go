@@ -16,6 +16,19 @@ func (h *Handler) NewCategory(c *gin.Context) {
 		return
 	}
 
+	exist, err := h.services.CheckCategoryName(input.Name)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	if exist {
+		h.logger.Error("category is already exist")
+		c.JSON(http.StatusBadRequest, gin.H{"message": "category is already exist"})
+		return
+	}
+
 	id, err := h.services.CreateNewCategory(input)
 	if err != nil {
 		h.logger.Error(err.Error())

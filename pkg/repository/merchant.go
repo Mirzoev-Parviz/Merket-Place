@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"market_place/config"
 	"market_place/models"
 
@@ -58,84 +59,6 @@ func (m *MerchPostgres) DeleteMerchant(id int) error {
 
 //Adding product to merchants
 
-func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, error) {
-	tx := config.DB.Begin()
-
-	exist, err := ExistMerchantProduct(merch.MerchantID, merch.ProductID)
-	if err != nil {
-		return 0, err
-	}
-
-	if exist {
-		if err := ChangeProductQuantity(merch.ProductID, merch.Quantity); err != nil {
-			tx.Rollback()
-			return 0, err
-		}
-
-		var test models.MerchantProduct
-
-		if err := config.DB.Where("merchant_id = ? AND product_id = ? AND is_active = TRUE",
-			merch.MerchantID, merch.ProductID).First(&test).Error; err != nil {
-			tx.Rollback()
-			return 0, nil
-		}
-
-		merch.Quantity += test.Quantity
-
-		err := config.DB.Where("merchant_id = ? AND product_id = ? AND is_active = TRUE",
-			merch.MerchantID, merch.ProductID).Updates(&merch).Error
-		if err != nil {
-			return 0, err
-		}
-
-	} else {
-		if err := ChangeProductQuantity(merch.ProductID, merch.Quantity); err != nil {
-			tx.Rollback()
-			return 0, err
-		}
-		if err := config.DB.Create(&merch).Error; err != nil {
-			tx.Rollback()
-			return 0, err
-		}
-	}
-	tx.Commit()
-	return int(merch.ID), nil
-}
-
-func (m *MerchPostgres) GetMerchProduct(id int) (mp models.MerchantProduct, err error) {
-	err = config.DB.Where("id = ? AND is_active = TRUE", id).First(&mp).Error
-	if err != nil {
-		return models.MerchantProduct{}, err
-	}
-
-	return mp, nil
-}
-
-func (m *MerchPostgres) UpdateMerchProduct(id int, merch models.MerchantProduct) error {
-	err := config.DB.Where("id = ? AND is_active = TRUE", id).Updates(&merch).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MerchPostgres) DeleteMerchProduct(id int) error {
-	merch, err := m.GetMerchProduct(id)
-	if err != nil {
-		return err
-	}
-
-	merch.IsActive = false
-
-	err = config.DB.Where("id = ? AND  is_active = TRUE", id).Save(&merch).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *MerchPostgres) SearchMerchProduct(query string) (products []models.MerchantProduct, err error) {
 	productIdes, err := GetProductByQuery(query)
 	if err != nil {
@@ -186,4 +109,15 @@ func ExistMerchantProduct(merchantID, productID int) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func GetProductPrice(id int) (price float64, err error) {
+	err = config.DB.Table("products").Select("price").Where("id = ? AND is_active = TRUE", id).Find(&price).Error
+	if err != nil {
+		return 0, err
+	}
+
+	fmt.Printf("price is: %v\n", price)
+
+	return price, nil
 }

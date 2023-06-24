@@ -49,3 +49,6 @@ func (m *MerchService) DeleteMerchProduct(id int) error {
 func (m *MerchService) SearchMerchProduct(query string) ([]models.MerchantProduct, error) {
 	return m.repo.SearchMerchProduct(query)
 }
+func (m *MerchService) GetFilterdProducts(input models.Filter) ([]models.MerchantProduct, error) {
+	return m.repo.GetFilterdProducts(input)
+}
