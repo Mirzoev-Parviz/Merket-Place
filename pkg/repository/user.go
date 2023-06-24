@@ -54,6 +54,10 @@ func (u *UserPostgres) DeactivateUser(id int) error {
 		return err
 	}
 
+	if err := DeactiveCart(user.ID); err != nil {
+		return err
+	}
+
 	user.IsActive = false
 
 	if err := config.DB.Save(&user).Error; err != nil {

@@ -49,9 +49,10 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		user := api.Group("user")
 		{
 			user.GET("/:id", h.GetUser)
-			user.PUT("/:id", h.UserIdentity, h.UpdateUser)
-			user.DELETE("/:id", h.UserIdentity, h.DeleteUser)
+			user.PUT("/", h.UserIdentity, h.UpdateUser)
+			user.DELETE("/", h.UserIdentity, h.DeleteUser)
 			user.POST("/", h.UserIdentity, h.BuyIt)
+			user.GET("/history", h.UserIdentity, h.History)
 
 			cart := api.Group("cart", h.UserIdentity)
 			{

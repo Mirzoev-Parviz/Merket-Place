@@ -21,6 +21,8 @@ func (p *ProductPostgres) CreateProduct(product models.Product) (int, error) {
 		return 0, err
 	}
 
+	product.InStock = BeforeSave(product.Quantity, product.InStock)
+
 	if err := config.DB.Create(&product).Error; err != nil {
 		return 0, err
 	}
@@ -84,4 +86,14 @@ func GetProductInfo(id int) (product models.Product, err error) {
 	}
 
 	return product, nil
+}
+
+func BeforeSave(quantity int, inStock bool) bool {
+	if quantity > 0 {
+		inStock = true
+	} else {
+		inStock = false
+	}
+
+	return inStock
 }

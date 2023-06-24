@@ -52,6 +52,7 @@ type Cart interface {
 	CreateCart(userId int) error
 	AddCartItem(userID int, item models.CartItem) (int, error)
 	BuyIt(userID int) error
+	History(userID int) (cartItems []models.CartItem, err error)
 }
 
 type Service struct {

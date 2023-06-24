@@ -43,18 +43,10 @@ func (m *MerchPostgres) UpdateMerchant(id int, merch models.Merchant) error {
 }
 
 func (m *MerchPostgres) DeleteMerchant(id int) error {
-	merch, err := m.GetMerchant(id)
-	if err != nil {
-		return err
-	}
-
-	merch.IsActive = false
-
-	if err = config.DB.Where("id = ?", id).Save(&merch).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return config.DB.
+		Model(&models.Merchant{}).
+		Where("id = ? AND is_active = TRUE").
+		Update("is_active", false).Error
 }
 
 //Adding product to merchants
@@ -83,6 +75,7 @@ func ChangeProductQuantity(id, quantity int) error {
 	}
 
 	product.Quantity -= quantity
+	product.InStock = BeforeSave(product.Quantity, product.InStock)
 
 	if err := config.DB.Where("id = ? AND is_active = TRUE", product.ID).Save(&product).Error; err != nil {
 		tx.Rollback()

@@ -24,3 +24,7 @@ func (c *CartService) AddCartItem(userID int, item models.CartItem) (int, error)
 func (c *CartService) BuyIt(userID int) error {
 	return c.repo.BuyIt(userID)
 }
+
+func (c *CartService) History(userID int) (cartItems []models.CartItem, err error) {
+	return c.repo.History(userID)
+}

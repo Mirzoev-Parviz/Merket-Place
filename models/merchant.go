@@ -21,5 +21,6 @@ type MerchantProduct struct {
 	Category    string  `json:"category"`
 	Quantity    int     `json:"quantity" gorm:"not null; default: 1"`
 	Price       float64 `json:"price" gorm:"references: prdocts(price)"`
+	InStock     bool    `json:"in_stock"`
 	IsActive    bool    `json:"is_active" gorm:"not null; default: true"`
 }

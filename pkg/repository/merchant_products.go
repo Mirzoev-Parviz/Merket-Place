@@ -49,6 +49,7 @@ func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, er
 		merch.Category = product.Category
 		merch.Title = product.Title
 		merch.Description = product.Description
+		merch.InStock = BeforeSave(merch.Quantity, merch.InStock)
 
 		if merch.Price == 0 {
 			merch.Price = product.Price

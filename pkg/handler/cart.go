@@ -49,3 +49,22 @@ func (h *Handler) BuyIt(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "buyed successfully"})
 }
+
+func (h *Handler) History(c *gin.Context) {
+	userID, err := getUserId(c)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	info, err := h.services.History(userID)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, info)
+
+}
