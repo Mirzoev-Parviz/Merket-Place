@@ -57,6 +57,8 @@ type Cart interface {
 	AddCartItem(userID int, item models.CartItem) (int, error)
 	BuyIt(cartID int) error
 	History(userID int) (cartItems []models.CartItem, err error)
+	Later(userID, cartItemID int) error
+	DeleteLater(userID, cartItemID int) error
 }
 
 type Repository struct {

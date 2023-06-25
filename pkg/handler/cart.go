@@ -68,3 +68,52 @@ func (h *Handler) History(c *gin.Context) {
 	c.JSON(http.StatusOK, info)
 
 }
+
+func (h *Handler) Later(c *gin.Context) {
+	userID, err := getUserId(c)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	var item models.CartItem
+	if err = c.BindJSON(&item); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if err = h.services.Later(userID, item.ID); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "submitet successfully"})
+
+}
+
+func (h *Handler) DeleteLater(c *gin.Context) {
+	userID, err := getUserId(c)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	var item models.CartItem
+	if err = c.BindJSON(&item); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if err = h.services.DeleteLater(userID, item.ID); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
+}

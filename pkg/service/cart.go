@@ -28,3 +28,10 @@ func (c *CartService) BuyIt(userID int) error {
 func (c *CartService) History(userID int) (cartItems []models.CartItem, err error) {
 	return c.repo.History(userID)
 }
+
+func (c *CartService) Later(userID, cartItemID int) error {
+	return c.repo.Later(userID, cartItemID)
+}
+func (c *CartService) DeleteLater(userID, cartItemID int) error {
+	return c.repo.DeleteLater(userID, cartItemID)
+}

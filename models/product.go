@@ -55,6 +55,7 @@ type Rating struct {
 	UpdatedAt time.Time
 }
 
-type WishList struct {
+type Later struct {
+	CartID     int `json:"cart_id"`
 	CartItemID int `json:"cart_item_id"`
 }

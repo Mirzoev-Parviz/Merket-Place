@@ -85,20 +85,28 @@ func (c *CartPostgres) BuyIt(userID int) error {
 	}
 
 	for _, item := range items {
-		err = ChangeMerchantQuantity(item.MerchantID, item.ProductID, item.Quantity)
+
+		exist, err := CheckCartItemID(item.ID)
 		if err != nil {
 			return err
 		}
 
-		err = config.DB.Model(&models.CartItem{}).Where("id = ? AND cart_id = ? AND is_active = TRUE",
-			item.ID, cartID).UpdateColumn("is_active", false).Error
-		if err != nil {
-			return err
-		}
+		if !exist {
+			err = ChangeMerchantQuantity(item.MerchantID, item.ProductID, item.Quantity)
+			if err != nil {
+				return err
+			}
 
-		err = IncreaseTotalOrders(item.ProductID)
-		if err != nil {
-			return err
+			err = config.DB.Model(&models.CartItem{}).Where("id = ? AND cart_id = ? AND is_active = TRUE",
+				item.ID, cartID).UpdateColumn("is_active", false).Error
+			if err != nil {
+				return err
+			}
+
+			err = IncreaseTotalOrders(item.ProductID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -171,4 +179,53 @@ func IncreaseTotalOrders(productID int) error {
 		Where("id = ?", productID).
 		UpdateColumn("total_orders", gorm.
 			Expr("total_orders + ?", 1)).Error
+}
+
+func (c *CartPostgres) Later(userID, cartItemID int) error {
+	var later models.Later
+
+	cartID, err := GetCartID(userID)
+	if err != nil {
+		return err
+	}
+
+	later.CartID = cartID
+	later.CartItemID = cartItemID
+
+	if err := config.DB.Create(&later).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *CartPostgres) DeleteLater(userID, cartItemID int) error {
+
+	cartID, err := GetCartID(userID)
+	if err != nil {
+		return err
+	}
+
+	err = config.DB.Where("cart_id = ? AND cart_item_id = ?",
+		cartID, cartItemID).Delete(&models.Later{}).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CheckCartItemID(id int) (bool, error) {
+	var cartItemID int
+	err := config.DB.Model(&models.Later{}).Select("cart_item_id").
+		Where("cart_item_id = ?", id).Scan(&cartItemID).Error
+	if err != nil {
+		return true, err
+	}
+
+	if cartItemID == id {
+		return true, nil
+	}
+
+	return false, nil
 }

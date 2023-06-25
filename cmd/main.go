@@ -24,7 +24,7 @@ func main() {
 
 	config.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Product{},
 		&models.Merchant{}, &models.MerchantProduct{}, &models.Cart{},
-		&models.CartItem{}, &models.Review{})
+		&models.CartItem{}, &models.Review{}, &models.Later{})
 	db := config.ConnectDB()
 	defer config.Disconnect(db)
 
