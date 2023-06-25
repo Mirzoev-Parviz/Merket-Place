@@ -37,14 +37,13 @@ func (c *CategoryPostgres) GetCategory(name string) (category models.Category, e
 	return category, nil
 }
 
-func (c *CategoryPostgres) GetCategoryProducts(name string) (productList []models.Product, err error) {
-
-	err = config.DB.Where("category = ? AND is_active = TRUE", name).Find(&productList).Error
+func (c *CategoryPostgres) GetCategoryByID(id int) (category models.Category, err error) {
+	err = config.DB.Where("id = ? AND is_active = TRUE").First(&category).Error
 	if err != nil {
-		return []models.Product{}, err
+		return models.Category{}, err
 	}
 
-	return productList, nil
+	return category, nil
 }
 
 func (c *CategoryPostgres) GetAllCategories() (categories []models.Category, err error) {

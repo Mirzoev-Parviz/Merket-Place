@@ -40,21 +40,21 @@ func (h *Handler) NewCategory(c *gin.Context) {
 }
 
 func (h *Handler) ShowCategoryProducts(c *gin.Context) {
-	id := getName(c)
-	/*if err != nil {
+	id, err := getId(c)
+	if err != nil {
 		h.logger.Error(err.Error())
 		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
-	}*/
+	}
 
-	productList, err := h.services.GetCategoryProducts(id)
+	category, err := h.services.GetCategoryByID(id)
 	if err != nil {
 		h.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, productList)
+	c.JSON(http.StatusOK, category)
 }
 
 func (h *Handler) ShowAllCategories(c *gin.Context) {

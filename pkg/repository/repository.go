@@ -41,7 +41,7 @@ type Merchant interface {
 type Category interface {
 	CreateNewCategory(categ models.Category) (int, error)
 	GetAllCategories() ([]models.Category, error)
-	GetCategoryProducts(name string) ([]models.Product, error)
+	GetCategoryByID(id int) (category models.Category, err error)
 	CheckCategoryName(name string) (bool, error)
 }
 
