@@ -32,6 +32,8 @@ type Merchant interface {
 
 	SearchMerchProduct(query string) ([]models.MerchantProduct, error)
 	GetFilterdProducts(input models.Filter) ([]models.MerchantProduct, error)
+	CreateReview(review models.Review) error
+	CalculateProductRating(productID int) error
 }
 
 type Category interface {

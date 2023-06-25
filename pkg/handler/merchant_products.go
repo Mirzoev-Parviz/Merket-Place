@@ -131,3 +131,48 @@ func (h *Handler) GetFilterdProducts(c *gin.Context) {
 
 	c.JSON(http.StatusOK, products)
 }
+
+func (h *Handler) CreateReview(c *gin.Context) {
+	var input models.Review
+	if err := c.BindJSON(&input); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	id, err := getUserId(c)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	input.UserID = id
+
+	if err := h.services.CreateReview(input); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "submitted successfully"})
+}
+
+/*
+func (h *Handler) ShowTotalRating(c *gin.Context) {
+	id, err := getId(c)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	rating, err := h.services.CalculateProductRating(id)
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": rating})
+}*/

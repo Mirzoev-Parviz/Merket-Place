@@ -53,6 +53,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			user.DELETE("/", h.UserIdentity, h.DeleteUser)
 			user.POST("/", h.UserIdentity, h.BuyIt)
 			user.GET("/history", h.UserIdentity, h.History)
+			user.POST("/review", h.UserIdentity, h.CreateReview)
 
 			cart := api.Group("cart", h.UserIdentity)
 			{
@@ -86,6 +87,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 				product.POST("/search", h.SearchMerchProducts)
 				product.POST("/filter", h.GetFilterdProducts)
+				// product.GET("/rating/:id", h.ShowTotalRating)
 			}
 		}
 

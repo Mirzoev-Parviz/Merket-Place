@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"market_place/config"
 	"market_place/models"
 
@@ -74,20 +75,28 @@ func (c *CartPostgres) BuyIt(userID int) error {
 		return err
 	}
 	var items []models.CartItem
-	err = config.DB.Where("cart_id = ?", cartID).Find(&items).Error
+	err = config.DB.Where("cart_id = ? AND is_active = TRUE", cartID).Find(&items).Error
 	if err != nil {
 		return err
 	}
 
-	for i := range items {
-		err = ChangeMerchantQuantity(items[i].MerchantID, items[i].ProductID, items[i].Quantity)
+	if len(items) == 0 {
+		return errors.New("cart is empty")
+	}
+
+	for _, item := range items {
+		err = ChangeMerchantQuantity(item.MerchantID, item.ProductID, item.Quantity)
 		if err != nil {
 			return err
 		}
 
 		err = config.DB.Model(&models.CartItem{}).Where("id = ? AND cart_id = ? AND is_active = TRUE",
-			items[i].ID, cartID).UpdateColumn("is_active", false).Error
+			item.ID, cartID).UpdateColumn("is_active", false).Error
+		if err != nil {
+			return err
+		}
 
+		err = IncreaseTotalOrders(item.ProductID)
 		if err != nil {
 			return err
 		}
@@ -107,13 +116,17 @@ func GetCartID(userID int) (int, error) {
 
 func ChangeMerchantQuantity(merchantID, productID, quantity int) error {
 	var merchProd models.MerchantProduct
-	err := config.DB.Where("product_id = ? AND merchant_id = ? AND is_active = TRUE", productID, merchantID).First(&merchProd).Error
+	err := config.DB.Where("product_id = ? AND merchant_id = ? AND is_active = TRUE",
+		productID, merchantID).First(&merchProd).Error
 	if err != nil {
 		return err
 	}
 
 	tx := config.DB.Begin()
 	merchProd.Quantity -= quantity
+	if merchProd.Quantity < 0 {
+		merchProd.Quantity = 0
+	}
 	merchProd.InStock = BeforeSave(merchProd.Quantity, merchProd.InStock)
 
 	if err = config.DB.Save(&merchProd).Error; err != nil {
@@ -137,4 +150,11 @@ func (c *CartPostgres) History(userID int) (cartItems []models.CartItem, err err
 	}
 
 	return cartItems, nil
+}
+
+func IncreaseTotalOrders(productID int) error {
+	return config.DB.Model(&models.MerchantProduct{}).
+		Where("id = ?", productID).
+		UpdateColumn("total_orders", gorm.
+			Expr("total_orders + ?", 1)).Error
 }

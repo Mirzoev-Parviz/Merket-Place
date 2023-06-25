@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Category struct {
 	ID       int    `json:"id"`
 	ParentID int    `json:"parent_id"`
@@ -32,4 +34,23 @@ type Filter struct {
 type ProductInfo struct {
 	Product  Product `json:"product"`
 	Merchant string  `json:"merchant"`
+}
+
+type Review struct {
+	ID         int    `json:"id" gorm:"primaryKey"`
+	ProductID  int    `json:"product_id" gorm:"not null"`
+	MerchantID int    `json:"merchant_id" gorm:"not null"`
+	UserID     int    `json:"user_id" gorm:"not null"`
+	Rating     int    `json:"rating" gorm:"not null"`
+	Comment    string `json:"comment" gorm:"not null"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+type Rating struct {
+	ID        int `json:"id" gorm:"primaryKey"`
+	ProductID int `json:"product_id" gorm:"not null"`
+	Value     int `json:"value" gorm:"not null"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
