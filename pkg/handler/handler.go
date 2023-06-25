@@ -82,6 +82,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			{
 				product.POST("/", h.MerchIdentity, h.AddProductToShelf)
 				product.GET("/:id", h.MerchIdentity, h.GetMerchantProduct)
+				product.GET("/", h.GetAllMerchantProducts)
 				product.PUT("/:id", h.MerchIdentity, h.UpdateMerchProduct)
 				product.DELETE("/:id", h.MerchIdentity, h.DeleteMerchProduct)
 

@@ -74,6 +74,15 @@ func (m *MerchPostgres) GetMerchProduct(id int) (mp models.MerchantProduct, err 
 	return mp, nil
 }
 
+func (m *MerchPostgres) GetAllMerchProducts() (products []models.MerchantProduct, err error) {
+	err = config.DB.Where("is_active = TRUE").Find(&products).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
 func (m *MerchPostgres) UpdateMerchProduct(id int, merch models.MerchantProduct) error {
 	err := config.DB.Where("id = ? AND is_active = TRUE", id).Updates(&merch).Error
 	if err != nil {
@@ -151,4 +160,28 @@ func (m *MerchPostgres) CalculateProductRating(productID int) error {
 	return config.DB.Model(&models.MerchantProduct{}).
 		Where("id = ?", productID).
 		UpdateColumn("rating", overallRating).Error
+}
+
+func GetRecomenndetIds() (ids []int, err error) {
+	err = config.DB.Model(&models.MerchantProduct{}).
+		Order("RANDOM()").Limit(10).Pluck("id", &ids).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return ids, nil
+}
+
+func (m *MerchPostgres) GetRecommendetProducts() (products []models.MerchantProduct, err error) {
+	ids, err := GetRecomenndetIds()
+	if err != nil {
+		return nil, err
+	}
+
+	err = config.DB.Where("id IN (?) AND is_active = TRUE", ids).Find(&products).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }

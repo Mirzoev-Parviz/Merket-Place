@@ -37,6 +37,9 @@ func (m *MerchService) AddProductToShelf(merch models.MerchantProduct) (int, err
 func (m *MerchService) GetMerchProduct(id int) (models.MerchantProduct, error) {
 	return m.repo.GetMerchProduct(id)
 }
+func (m *MerchService) GetAllMerchantProducts() ([]models.MerchantProduct, error) {
+	return m.repo.GetAllMerchProducts()
+}
 
 func (m *MerchService) UpdateMerchProduct(id int, merch models.MerchantProduct) error {
 	return m.repo.UpdateMerchProduct(id, merch)
@@ -57,4 +60,7 @@ func (m *MerchService) CreateReview(review models.Review) error {
 }
 func (m *MerchService) CalculateProductRating(productID int) error {
 	return m.repo.CalculateProductRating(productID)
+}
+func (m *MerchService) GetRecommendetProducts() (products []models.MerchantProduct, err error) {
+	return m.repo.GetRecommendetProducts()
 }

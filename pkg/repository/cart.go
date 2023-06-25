@@ -114,6 +114,20 @@ func GetCartID(userID int) (int, error) {
 	return cart.ID, nil
 }
 
+func GetCartItems(userID int) (items []models.CartItem, err error) {
+	id, err := GetCartID(userID)
+	if err != nil {
+		return []models.CartItem{}, err
+	}
+
+	err = config.DB.Where("cart_id = ?", id).Find(items).Error
+	if err != nil {
+		return []models.CartItem{}, err
+	}
+
+	return items, nil
+}
+
 func ChangeMerchantQuantity(merchantID, productID, quantity int) error {
 	var merchProd models.MerchantProduct
 	err := config.DB.Where("product_id = ? AND merchant_id = ? AND is_active = TRUE",

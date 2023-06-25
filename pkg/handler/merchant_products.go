@@ -53,6 +53,28 @@ func (h *Handler) GetMerchantProduct(c *gin.Context) {
 
 }
 
+func (h *Handler) GetAllMerchantProducts(c *gin.Context) {
+	products, err := h.services.GetAllMerchantProducts()
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	recommendedProducts, err := h.services.GetRecommendetProducts()
+	if err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"recommended for you": recommendedProducts,
+		"other products":      products,
+	})
+
+}
+
 func (h *Handler) UpdateMerchProduct(c *gin.Context) {
 	id, err := getId(c)
 	if err != nil {

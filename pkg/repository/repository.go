@@ -22,6 +22,7 @@ type User interface {
 type Merchant interface {
 	CreateMerchant(merch models.Merchant) (int, error)
 	GetMerchant(id int) (models.Merchant, error)
+	GetAllMerchProducts() ([]models.MerchantProduct, error)
 	UpdateMerchant(id int, merch models.Merchant) error
 	DeleteMerchant(id int) error
 
@@ -34,6 +35,7 @@ type Merchant interface {
 	GetFilterdProducts(input models.Filter) ([]models.MerchantProduct, error)
 	CreateReview(review models.Review) error
 	CalculateProductRating(productID int) error
+	GetRecommendetProducts() (products []models.MerchantProduct, err error)
 }
 
 type Category interface {
