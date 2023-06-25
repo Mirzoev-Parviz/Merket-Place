@@ -179,22 +179,3 @@ func (h *Handler) CreateReview(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "submitted successfully"})
 }
-
-/*
-func (h *Handler) ShowTotalRating(c *gin.Context) {
-	id, err := getId(c)
-	if err != nil {
-		h.logger.Error(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-
-	rating, err := h.services.CalculateProductRating(id)
-	if err != nil {
-		h.logger.Error(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": rating})
-}*/
