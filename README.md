@@ -14,10 +14,15 @@
 
 ## Стек технологий:
 1.Golang
+
 2.gin-gonic
+
 3.PostgreSQL
+
 4.gORM
+
 5.joho/godotenv
+
 6.golang-jwt/jwt/v5
 
 ## Функции:
