@@ -26,3 +26,7 @@ type MerchantProduct struct {
 	Rating      float64 `json:"rating"`
 	IsActive    bool    `json:"is_active" gorm:"not null; default: true"`
 }
+
+type Pagination struct {
+	Page int `json:"page"`
+}

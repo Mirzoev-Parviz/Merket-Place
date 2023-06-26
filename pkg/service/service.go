@@ -22,7 +22,7 @@ type User interface {
 type Merchant interface {
 	CreateMerchant(merch models.Merchant) (int, error)
 	GetMerchant(id int) (models.Merchant, error)
-	GetAllMerchantProducts() ([]models.MerchantProduct, error)
+	GetAllMerchantProducts(page int) ([]models.MerchantProduct, error)
 	UpdateMerchant(id int, merch models.Merchant) error
 	DeleteMerchant(id int) error
 

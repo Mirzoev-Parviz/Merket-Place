@@ -20,7 +20,7 @@ func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, er
 		}
 
 		var quantity int
-		if err := config.DB.Model(&models.MerchantProduct{}).Select("quantity").
+		if err := tx.Model(&models.MerchantProduct{}).Select("quantity").
 			Where("merchant_id = ? AND product_id = ? AND is_active = TRUE", merch.MerchantID, merch.ProductID).
 			Scan(&quantity).Error; err != nil {
 			return 0, err
@@ -29,7 +29,7 @@ func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, er
 		merch.Quantity += quantity
 		merch.InStock = BeforeSave(merch.Quantity, merch.InStock)
 
-		err := config.DB.Where("merchant_id = ? AND product_id = ? AND is_active = TRUE",
+		err := tx.Where("merchant_id = ? AND product_id = ? AND is_active = TRUE",
 			merch.MerchantID, merch.ProductID).Updates(&merch).Error
 		if err != nil {
 			return 0, err
@@ -55,7 +55,7 @@ func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, er
 			merch.Price = product.Price
 		}
 
-		if err := config.DB.Create(&merch).Error; err != nil {
+		if err := tx.Create(&merch).Error; err != nil {
 			tx.Rollback()
 			return 0, err
 		}
@@ -73,10 +73,12 @@ func (m *MerchPostgres) GetMerchProduct(id int) (mp models.MerchantProduct, err 
 	return mp, nil
 }
 
-func (m *MerchPostgres) GetAllMerchProducts() (products []models.MerchantProduct, err error) {
-	err = config.DB.Where("is_active = TRUE").Find(&products).Error
+func (m *MerchPostgres) GetAllMerchProducts(page int) (products []models.MerchantProduct, err error) {
+	err = config.DB.Model(&[]models.MerchantProduct{}).Where("is_active = TRUE").
+		Limit(10).Offset((page - 1) * 10).Find(&products).Error
+
 	if err != nil {
-		return nil, err
+		return []models.MerchantProduct{}, err
 	}
 
 	return products, nil

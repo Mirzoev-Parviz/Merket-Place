@@ -39,8 +39,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		category.POST("/", h.NewCategory)
 		category.GET("/:id", h.ShowCategoryProducts)
 		category.GET("/", h.ShowAllCategories)
-		// category.PUT("/:id")
-		// category.DELETE("/:id")
 	}
 
 	api := router.Group("api")
@@ -89,7 +87,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			product := merchant.Group("product")
 			{
 				product.POST("/", h.MerchIdentity, h.AddProductToShelf)
-				product.GET("/:id", h.MerchIdentity, h.GetMerchantProduct)
+				product.GET("/:id", h.GetMerchantProduct)
 				product.GET("/", h.GetAllMerchantProducts)
 				product.PUT("/:id", h.MerchIdentity, h.UpdateMerchProduct)
 				product.DELETE("/:id", h.MerchIdentity, h.DeleteMerchProduct)

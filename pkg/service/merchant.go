@@ -37,8 +37,8 @@ func (m *MerchService) AddProductToShelf(merch models.MerchantProduct) (int, err
 func (m *MerchService) GetMerchProduct(id int) (models.MerchantProduct, error) {
 	return m.repo.GetMerchProduct(id)
 }
-func (m *MerchService) GetAllMerchantProducts() ([]models.MerchantProduct, error) {
-	return m.repo.GetAllMerchProducts()
+func (m *MerchService) GetAllMerchantProducts(page int) ([]models.MerchantProduct, error) {
+	return m.repo.GetAllMerchProducts(page)
 }
 
 func (m *MerchService) UpdateMerchProduct(id int, merch models.MerchantProduct) error {

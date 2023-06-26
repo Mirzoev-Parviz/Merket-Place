@@ -54,7 +54,15 @@ func (h *Handler) GetMerchantProduct(c *gin.Context) {
 }
 
 func (h *Handler) GetAllMerchantProducts(c *gin.Context) {
-	products, err := h.services.GetAllMerchantProducts()
+	var input models.Pagination
+
+	if err := c.BindJSON(&input); err != nil {
+		h.logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	products, err := h.services.GetAllMerchantProducts(input.Page)
 	if err != nil {
 		h.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
