@@ -13,12 +13,12 @@
 4. Запустите приложение, используя команду go run ./cmd.
 
 ## Стек технологий:
-Golang
-gin-gonic
-PostgreSQL
-gORM
-joho/godotenv
-golang-jwt/jwt/v5:
+1.Golang
+2.gin-gonic
+3.PostgreSQL
+4.gORM
+5.joho/godotenv
+6.golang-jwt/jwt/v5
 
 ## Функции:
 1. CRUD для категорий 
