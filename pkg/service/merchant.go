@@ -55,12 +55,6 @@ func (m *MerchService) SearchMerchProduct(query string) ([]models.MerchantProduc
 func (m *MerchService) GetFilterdProducts(input models.Filter) ([]models.MerchantProduct, error) {
 	return m.repo.GetFilterdProducts(input)
 }
-func (m *MerchService) CreateReview(review models.Review) error {
-	return m.repo.CreateReview(review)
-}
-func (m *MerchService) CalculateProductRating(productID int) error {
-	return m.repo.CalculateProductRating(productID)
-}
 func (m *MerchService) GetRecommendetProducts() (products []models.MerchantProduct, err error) {
 	return m.repo.GetRecommendetProducts()
 }

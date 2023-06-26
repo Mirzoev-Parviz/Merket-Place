@@ -3,7 +3,6 @@ package repository
 import (
 	"market_place/config"
 	"market_place/models"
-	"math"
 )
 
 func (m *MerchPostgres) AddProductToShelf(merch models.MerchantProduct) (int, error) {
@@ -93,14 +92,8 @@ func (m *MerchPostgres) UpdateMerchProduct(id int, merch models.MerchantProduct)
 }
 
 func (m *MerchPostgres) DeleteMerchProduct(id int) error {
-	merch, err := m.GetMerchProduct(id)
-	if err != nil {
-		return err
-	}
-
-	merch.IsActive = false
-
-	err = config.DB.Where("id = ? AND  is_active = TRUE", id).Save(&merch).Error
+	err := config.DB.Model(&models.MerchantProduct{}).
+		Where("id = ? AND is_active = TRUE", id).Update("is_active", false).Error
 	if err != nil {
 		return err
 	}
@@ -129,37 +122,6 @@ func (m *MerchPostgres) GetFilterdProducts(input models.Filter) (products []mode
 	}
 
 	return products, nil
-}
-
-func (m *MerchPostgres) CreateReview(review models.Review) error {
-	if review.Rating > 5 {
-		review.Rating = 5
-	}
-
-	if err := config.DB.Create(&review).Error; err != nil {
-		return err
-	}
-
-	if err := m.CalculateProductRating(review.ProductID); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MerchPostgres) CalculateProductRating(productID int) error {
-	var totalRating float64
-	var count int64
-	if err := config.DB.Model(&models.Review{}).
-		Where("product_id = ?", productID).
-		Select("COALESCE(AVG(rating), 0)").
-		Count(&count).Row().Scan(&totalRating); err != nil {
-		return err
-	}
-	overallRating := math.Min(totalRating, 5.0)
-	return config.DB.Model(&models.MerchantProduct{}).
-		Where("id = ?", productID).
-		UpdateColumn("rating", overallRating).Error
 }
 
 func GetRecomenndetIds() (ids []int, err error) {

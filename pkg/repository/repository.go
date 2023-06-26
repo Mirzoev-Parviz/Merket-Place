@@ -33,8 +33,6 @@ type Merchant interface {
 
 	SearchMerchProduct(query string) ([]models.MerchantProduct, error)
 	GetFilterdProducts(input models.Filter) ([]models.MerchantProduct, error)
-	CreateReview(review models.Review) error
-	CalculateProductRating(productID int) error
 	GetRecommendetProducts() (products []models.MerchantProduct, err error)
 }
 
@@ -61,6 +59,16 @@ type Cart interface {
 	DeleteLater(userID, cartItemID int) error
 }
 
+type Review interface {
+	CreateReview(review models.Review) error
+	CalculateProductRating(productID int) error
+	GetReview(id int) (review models.Review, err error)
+	GetAllReviews() (reviews []models.Review, err error)
+	GetMerchantProductReview(merchantID, merchantProductID int) (reviews []models.Review, err error)
+	UpdateReview(input models.Review) error
+	DeleteReview(id, userID int) error
+}
+
 type Repository struct {
 	Authorization
 	User
@@ -68,6 +76,7 @@ type Repository struct {
 	Category
 	Product
 	Cart
+	Review
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -78,5 +87,6 @@ func NewRepository(db *gorm.DB) *Repository {
 		Category:      NewCategoryPostgres(db),
 		Product:       NewProductPostgres(db),
 		Cart:          NewCartPostgres(db),
+		Review:        NewReviewPostgres(db),
 	}
 }

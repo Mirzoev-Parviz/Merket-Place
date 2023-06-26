@@ -68,7 +68,16 @@ func SaveProduct(name string) error {
 		return err
 	}
 
+	if err = SaveTotalAmount(c.ParentID); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func SaveTotalAmount(id int) error {
+	return config.DB.Model(&models.Category{}).Where("id = ?", id).
+		Update("amount", gorm.Expr("amount + 1")).Error
 }
 
 func (c *CategoryPostgres) CheckCategoryName(name string) (bool, error) {
@@ -77,8 +86,6 @@ func (c *CategoryPostgres) CheckCategoryName(name string) (bool, error) {
 	if err != nil {
 		return true, err
 	}
-
-	// fmt.Println(category.Name)
 
 	if category.Name != "" {
 		return true, nil
