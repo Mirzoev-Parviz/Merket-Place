@@ -1,46 +1,39 @@
-## Названия:
-  Маркетплейс
+## Name:
+  Marketplace
 
-## Описание проекта: 
-Маркетплейс - это онлайн-платформа, 
-которая позволяет продавцам продавать свои товары и услуги, 
-а покупателям покупать их. 
+## Project Description:
+Marketplace is an online platform that allows sellers to sell their products and services, and buyers to purchase them.
 
-## Установка
-1. Клонируйте репозиторий на свой компьютер.
-2. Установите все зависимости, используя команду go mod init.
-3. Создайте файл .env и установите все необходимые переменные окружения.
-4. Запустите приложение, используя команду go run ./cmd.
+## Installation:
+1. Clone the repository to your computer.
+2. Install all dependencies using the command `go mod init`.
+3. Create a `.env` file and set all necessary environment variables.
+4. Run the application using the command `go run ./cmd`.
 
-## Стек технологий:
-1.Golang
+## Technology Stack:
+1. Golang  
+2. gin-gonic  
+3. PostgreSQL  
+4. gORM  
+5. joho/godotenv  
+6. golang-jwt/jwt/v5  
 
-2.gin-gonic
+## Features:
+1. CRUD for categories  
+2. CRUD for products  
+3. CRUD for users  
+4. CRUD for merchants (stores)  
+5. CRUD for reviews  
+6. CRUD for the shopping cart  
+7. Search by product name and category  
+8. Filters (by category, store, price) and sorting  
+9. Buy later option  
+10. Order history  
+11. Product stock availability  
+12. Status (in stock, pre-order, discount)  
+13. Product rating (number of orders, number of stars)  
+14. Recommendations  
+15. Get store contact information  
 
-3.PostgreSQL
-
-4.gORM
-
-5.joho/godotenv
-
-6.golang-jwt/jwt/v5
-
-## Функции:
-1. CRUD для категорий 
-2. CRUD для продуктов 
-3. CRUD для пользователей 
-4. CRUD для мерчанты(магазин) 
-5. CRUD для отзывов 
-6. CRUD для корзины 
-7. Поиск по названию товара, категории 
-8. Фильтры(по категориям, магазину, по цене) и сортировка 
-9. Купить позже
-10. История заказов 
-11. Остаток товара 
-12. Статус(в наличии, предзаказ, скидка) 
-13. Рейтинг товара(кол-во заказов, кол-во звезд) 
-14. Рекомендации 
-15. Получить контактную информацию магазина 
-
-## Автор
-Мирзоев Парвиз
+## Author:
+Mirzoev Parviz
